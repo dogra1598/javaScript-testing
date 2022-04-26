@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 
 describe("checkForShip", function () {
-  const { checkForShip } = require("../gameLogic/shipMethods");
+  const { checkForShip, fire } = require("../gameLogic/shipMethods");
 
   it("should correctly report no ship at a given players coordinate", function () {
     player = {
@@ -22,7 +22,7 @@ describe("checkForShip", function () {
         },
       ],
     };
-    expect(checkForShip(player, [0, 0])).to.be.true;
+    expect(checkForShip(player, [0, 0])).to.deep.equal(player.ships[0]);
   });
 
   it("should handle ships located at more than one coordinate", function () {
@@ -36,8 +36,8 @@ describe("checkForShip", function () {
         },
       ],
     };
-    expect(checkForShip(player, [0, 0])).to.be.true;
-    expect(checkForShip(player, [0, 1])).to.be.true;
+    expect(checkForShip(player, [0, 0])).to.deep.equal(player.ships[0]);
+    expect(checkForShip(player, [0, 1])).to.deep.equal(player.ships[0]);
     expect(checkForShip(player, [9, 9])).to.be.false;
   });
 
@@ -66,11 +66,11 @@ describe("checkForShip", function () {
         },
       ],
     };
-    expect(checkForShip(player, [0, 0])).to.be.true;
-    expect(checkForShip(player, [0, 1])).to.be.true;
-    expect(checkForShip(player, [1, 0])).to.be.true;
-    expect(checkForShip(player, [1, 1])).to.be.true;
-    expect(checkForShip(player, [2, 3])).to.be.true;
+    expect(checkForShip(player, [0, 0])).to.deep.equal(player.ships[0]);
+    expect(checkForShip(player, [0, 1])).to.deep.equal(player.ships[0]);
+    expect(checkForShip(player, [1, 0])).to.deep.equal(player.ships[1]);
+    expect(checkForShip(player, [1, 1])).to.deep.equal(player.ships[1]);
+    expect(checkForShip(player, [2, 3])).to.deep.equal(player.ships[2]);
     expect(checkForShip(player, [9, 9])).to.be.false;
   });
 });
@@ -88,5 +88,39 @@ describe("damageShip", function () {
 
     expect(ship.damage).to.not.be.empty;
     expect(ship.damage[0]).to.deep.equal([0, 0]);
+  });
+});
+
+describe("fire", function () {
+  const { fire } = require("../gameLogic/shipMethods");
+
+  it("should record damage on the given palyers ship at a given corordinate", function () {
+    const player = {
+      ships: [
+        {
+          locations: [[0, 0]],
+          damage: [],
+        },
+      ],
+    };
+
+    fire(player, [0, 0]);
+
+    expect(player.ships[0].damage[0]).to.deep.equal([0, 0]);
+  });
+
+  it("should not record damage if there is no ship at my coordinates", function () {
+    const player = {
+      ships: [
+        {
+          locations: [[0, 0]],
+          damage: [],
+        },
+      ],
+    };
+
+    fire(player, [9, 9]);
+
+    expect(player.ships[0].damage).to.be.empty;
   });
 });
